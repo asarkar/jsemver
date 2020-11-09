@@ -9,7 +9,7 @@ import java.util.Objects
  */
 sealed class Id(open val value: String) : Comparable<Id> {
     companion object {
-        fun parseId(str: String, allowLeadingZeroes: Boolean): Id {
+        fun parse(str: String, allowLeadingZeroes: Boolean): Id {
             return try {
                 str.toULong()
                 NumericId(str, allowLeadingZeroes)
@@ -158,7 +158,7 @@ sealed class Ids(open val ids: List<Id>) {
  * @author Abhijit Sarkar
  */
 class PreRelease(override val ids: List<Id>) : Ids(ids), Comparable<PreRelease> {
-    constructor(vararg ids: String) : this(ids.map { Id.parseId(it, false) })
+    constructor(vararg ids: String) : this(ids.map { Id.parse(it, false) })
 
     override fun compareTo(other: PreRelease): Int {
         val result = ids
@@ -190,7 +190,7 @@ class PreRelease(override val ids: List<Id>) : Ids(ids), Comparable<PreRelease> 
  * @author Abhijit Sarkar
  */
 class Build(override val ids: List<Id>) : Ids(ids) {
-    constructor(vararg ids: String) : this(ids.map { Id.parseId(it, true) })
+    constructor(vararg ids: String) : this(ids.map { Id.parse(it, true) })
 }
 
 /**

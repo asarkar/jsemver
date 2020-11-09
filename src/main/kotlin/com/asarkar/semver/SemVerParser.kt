@@ -14,11 +14,11 @@ internal class SemVerParser {
         delimiters = setOf('-', '+')
         val patch = parseNumericId(str, invalidNormalMessage)
         var preRelease: PreRelease? = null
-        var build: Build? = null
         if (start <= str.length && str[start - 1] == '-') {
             delimiters = setOf('+')
             preRelease = PreRelease(parseIds(str, "Invalid pre-release version"))
         }
+        var build: Build? = null
         if (start <= str.length && str[start - 1] == '+') {
             delimiters = emptySet()
             build = Build(parseIds(str, "Invalid build metadata", true))
@@ -36,7 +36,7 @@ internal class SemVerParser {
             .split("\\.".toRegex())
             .map { id ->
                 try {
-                    Id.parseId(id, allowLeadingZeroes)
+                    Id.parse(id, allowLeadingZeroes)
                         .also { start += id.length + 1 }
                 } catch (ex: IllegalArgumentException) {
                     throw IllegalArgumentException(errorMessage, ex)
@@ -45,10 +45,10 @@ internal class SemVerParser {
     }
 
     private fun parseNumericId(str: String, errorMessage: String, allowLeadingZeroes: Boolean = false): NumericId {
-        val segment = str.substring(start).takeWhile { !delimiters.contains(it) }
+        val id = str.substring(start).takeWhile { !delimiters.contains(it) }
         try {
-            return NumericId(segment, allowLeadingZeroes)
-                .also { start += segment.length + 1 }
+            return NumericId(id, allowLeadingZeroes)
+                .also { start += id.length + 1 }
         } catch (ex: IllegalArgumentException) {
             throw IllegalArgumentException(errorMessage, ex)
         }
