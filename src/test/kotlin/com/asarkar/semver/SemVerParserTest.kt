@@ -12,16 +12,16 @@ class SemVerParserTest {
         var semVer = SemVerParser().parse("1.0.0")
         Assertions.assertThat(semVer.hasPreRelease()).isFalse
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
 
         semVer = SemVerParser().parse("1.0.0-alpha")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         var ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]).isNull()
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("alpha")
@@ -29,9 +29,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-45")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[false]).isNull()
         Assertions.assertThat(ids[true]!!.map { it.toString() }).containsExactly("45")
@@ -39,9 +39,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-alpha.1")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]!!.map { it.toString() }).containsExactly("1")
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("alpha")
@@ -49,9 +49,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-0.3.7")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]!!.map { it.toString() }).containsExactly("0", "3", "7")
         Assertions.assertThat(ids[false]).isNull()
@@ -59,9 +59,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-x.7.z.92")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]!!.map { it.toString() }).containsExactly("7", "92")
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("x", "z")
@@ -69,9 +69,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-x-y-z.-")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isFalse
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]).isNull()
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("x-y-z", "-")
@@ -79,9 +79,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-alpha+001")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isTrue
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]).isNull()
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("alpha")
@@ -92,9 +92,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0+20130313144700")
         Assertions.assertThat(semVer.hasPreRelease()).isFalse
         Assertions.assertThat(semVer.hasBuild()).isTrue
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.build!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[false]).isNull()
         Assertions.assertThat(ids[true]!!.map { it.toString() }).containsExactly("20130313144700")
@@ -102,9 +102,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0-beta+exp.sha.5114f85")
         Assertions.assertThat(semVer.hasPreRelease()).isTrue
         Assertions.assertThat(semVer.hasBuild()).isTrue
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.preRelease!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[true]).isNull()
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("beta")
@@ -115,9 +115,9 @@ class SemVerParserTest {
         semVer = SemVerParser().parse("1.0.0+21AF26D3--117B344092BD")
         Assertions.assertThat(semVer.hasPreRelease()).isFalse
         Assertions.assertThat(semVer.hasBuild()).isTrue
-        Assertions.assertThat(semVer.major).isEqualTo(1)
-        Assertions.assertThat(semVer.minor).isEqualTo(0)
-        Assertions.assertThat(semVer.patch).isEqualTo(0)
+        Assertions.assertThat(semVer.major).isEqualTo(1uL)
+        Assertions.assertThat(semVer.minor).isEqualTo(0uL)
+        Assertions.assertThat(semVer.patch).isEqualTo(0uL)
         ids = semVer.build!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("21AF26D3--117B344092BD")
         Assertions.assertThat(ids[true]).isNull()

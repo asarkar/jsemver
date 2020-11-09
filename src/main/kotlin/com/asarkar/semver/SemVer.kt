@@ -11,7 +11,7 @@ sealed class Id(open val value: String) : Comparable<Id> {
     companion object {
         fun parseId(str: String, allowLeadingZeroes: Boolean): Id {
             return try {
-                str.toLong()
+                str.toULong()
                 NumericId(str, allowLeadingZeroes)
             } catch (nfe: NumberFormatException) {
                 AlphanumericId(str)
@@ -78,25 +78,25 @@ class NumericId(override val value: String, allowLeadingZeroes: Boolean) : Id(va
         }
     }
 
-    fun toInt() = value.toInt()
+    fun toULong() = value.toULong()
 
     override fun toString() = value
     override fun compareTo(other: Id): Int {
         return if (other is AlphanumericId) -1
         else {
             other as NumericId
-            value.toInt().compareTo(other.value.toInt())
+            value.toULong().compareTo(other.value.toULong())
         }
     }
 
     override fun equals(other: Any?): Boolean {
         if (other !is NumericId) return false
         if (other === this) return true
-        return value.toInt() == other.value.toInt()
+        return value.toULong() == other.value.toULong()
     }
 
     override fun hashCode(): Int {
-        return value.hashCode()
+        return value.toULong().hashCode()
     }
 }
 
@@ -203,8 +203,6 @@ class Build(override val ids: List<Id>) : Ids(ids) {
 class SemVer(val normal: Normal, val preRelease: PreRelease?, val build: Build?) : Comparable<SemVer> {
     constructor(normal: Normal) : this(normal, null, null)
 
-    private val components = listOf(normal, preRelease)
-
     override fun toString(): String {
         val s = StringBuilder().append(normal)
         if (preRelease != null) s.append('-').append(preRelease)
@@ -232,12 +230,12 @@ class SemVer(val normal: Normal, val preRelease: PreRelease?, val build: Build?)
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(*components.toTypedArray())
+        return Objects.hash(normal, preRelease)
     }
 
-    val major = normal.major.toInt()
-    val minor = normal.minor.toInt()
-    val patch = normal.patch.toInt()
+    val major = normal.major.toULong()
+    val minor = normal.minor.toULong()
+    val patch = normal.patch.toULong()
 
     fun withMajor(major: Any): SemVer = SemVer(normal.withMajor(major), preRelease, build)
     fun withMinor(minor: Any): SemVer = SemVer(normal.withMinor(minor), preRelease, build)
@@ -250,7 +248,7 @@ class SemVer(val normal: Normal, val preRelease: PreRelease?, val build: Build?)
         fun parse(str: String): SemVer = SemVerParser().parse(str)
         fun isValid(str: String): Boolean {
             return try {
-                SemVerParser().parse(str)
+                parse(str)
                 true
             } catch (ex: Exception) {
                 false

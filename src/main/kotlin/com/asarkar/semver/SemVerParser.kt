@@ -46,9 +46,9 @@ internal class SemVerParser {
 
     private fun parseNumericId(str: String, errorMessage: String, allowLeadingZeroes: Boolean = false): NumericId {
         val segment = str.substring(start).takeWhile { !delimiters.contains(it) }
-        start += segment.length + 1
         try {
             return NumericId(segment, allowLeadingZeroes)
+                .also { start += segment.length + 1 }
         } catch (ex: IllegalArgumentException) {
             throw IllegalArgumentException(errorMessage, ex)
         }
