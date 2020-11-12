@@ -1,0 +1,9 @@
+SemVer
+	NormalVersion
+		MajorVersion
+			NumericId
+				POSITIVE_DIGIT:"1"
+		DOT:"."
+		MinorVersion
+			NumericId
+				ZERO:"0"

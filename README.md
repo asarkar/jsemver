@@ -21,7 +21,7 @@ I'll consider publishing to Maven Central and jcenter if people start using this
 
 A valid semantic version is represented by the `SemVer` class. The easiest way to instantiate it is by parsing a string:
 ```
-val v = SemVer.parse("1.0.0")
+val v = SemVer.parseStr("1.0.0")
 ```
 
 `SemVer` comprises `NormalVersion`, and optionally, `PreRelease` and `Build`. The objects are immutable but there are 

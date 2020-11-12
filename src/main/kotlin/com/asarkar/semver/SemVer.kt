@@ -6,6 +6,7 @@ import java.util.Objects
  * SemVer identifier.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
 sealed class Id(open val value: String) : Comparable<Id> {
     companion object {
@@ -23,10 +24,11 @@ sealed class Id(open val value: String) : Comparable<Id> {
 /**
  * SemVer alphanumeric identifier.
  * MUST NOT be empty.
- * MUST comprise only ASCII alphanumerics and hyphens \[0-9A-Za-z-\].
+ * MUST comprise only ASCII alphanumerics and hyphens &#91;0-9A-Za-z-&#93;.
  * Compared lexically in ASCII sort order.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
 class AlphanumericId(override val value: String) : Id(value), Comparable<Id> {
     init {
@@ -63,6 +65,7 @@ class AlphanumericId(override val value: String) : Id(value), Comparable<Id> {
  * Compared numerically. Has lower precedence than alphanumeric identifiers.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
 class NumericId(override val value: String, allowLeadingZeroes: Boolean) : Id(value), Comparable<Id> {
     constructor(value: Any, allowLeadingZeroes: Boolean) : this(value.toString(), allowLeadingZeroes)
@@ -106,17 +109,18 @@ class NumericId(override val value: String, allowLeadingZeroes: Boolean) : Id(va
  * X is the major version, Y is the minor version, and Z is the patch version.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
-class Normal(val major: NumericId, val minor: NumericId, val patch: NumericId) : Comparable<Normal> {
+class NormalVersion(val majorVersion: NumericId, val minorVersion: NumericId, val patchVersion: NumericId) : Comparable<NormalVersion> {
     constructor(major: Any, minor: Any, patch: Any) : this(
         NumericId(major, false),
         NumericId(minor, false),
         NumericId(patch, false)
     )
 
-    private val components = listOf(major, minor, patch)
+    private val components = listOf(majorVersion, minorVersion, patchVersion)
     override fun toString() = components.joinToString(separator = ".")
-    override fun compareTo(other: Normal): Int {
+    override fun compareTo(other: NormalVersion): Int {
         return components
             .zip(other.components)
             .map { it.first.compareTo(it.second) }
@@ -125,7 +129,7 @@ class Normal(val major: NumericId, val minor: NumericId, val patch: NumericId) :
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is Normal) return false
+        if (other !is NormalVersion) return false
         if (other === this) return true
         return this.compareTo(other) == 0
     }
@@ -134,15 +138,16 @@ class Normal(val major: NumericId, val minor: NumericId, val patch: NumericId) :
         return Objects.hash(*components.toTypedArray())
     }
 
-    fun withMajor(major: Any): Normal = Normal(NumericId(major, false), minor, patch)
-    fun withMinor(minor: Any): Normal = Normal(major, NumericId(minor, false), patch)
-    fun withPatch(patch: Any): Normal = Normal(major, minor, NumericId(patch, false))
+    fun withMajorVersion(major: Any): NormalVersion = NormalVersion(NumericId(major, false), minorVersion, patchVersion)
+    fun withMinorVersion(minor: Any): NormalVersion = NormalVersion(majorVersion, NumericId(minor, false), patchVersion)
+    fun withPatchVersion(patch: Any): NormalVersion = NormalVersion(majorVersion, minorVersion, NumericId(patch, false))
 }
 
 /**
  * SemVer identifier container.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
 sealed class Ids(open val ids: List<Id>) {
     override fun toString() = ids.joinToString(separator = ".")
@@ -150,17 +155,19 @@ sealed class Ids(open val ids: List<Id>) {
 
 /**
  * SemVer pre-release version.
- * Identifiers MUST comprise only ASCII alphanumerics and hyphens \[0-9A-Za-z-\].
- * Identifiers MUST NOT be empty.
+ * MUST comprise only ASCII alphanumerics and hyphens &#91;0-9A-Za-z-&#93;.
+ * MUST NOT be empty.
  * Numeric identifiers MUST NOT include leading zeroes.
  * Pre-release versions have a lower precedence than the associated normal version.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
+ *
  */
-class PreRelease(override val ids: List<Id>) : Ids(ids), Comparable<PreRelease> {
+class PreReleaseVersion(override val ids: List<Id>) : Ids(ids), Comparable<PreReleaseVersion> {
     constructor(vararg ids: String) : this(ids.map { Id.parse(it, false) })
 
-    override fun compareTo(other: PreRelease): Int {
+    override fun compareTo(other: PreReleaseVersion): Int {
         val result = ids
             .zip(other.ids)
             .map { it.first.compareTo(it.second) }
@@ -171,7 +178,7 @@ class PreRelease(override val ids: List<Id>) : Ids(ids), Comparable<PreRelease> 
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is PreRelease) return false
+        if (other !is PreReleaseVersion) return false
         if (other === this) return true
         return this.compareTo(other) == 0
     }
@@ -183,13 +190,14 @@ class PreRelease(override val ids: List<Id>) : Ids(ids), Comparable<PreRelease> 
 
 /**
  * SemVer build metadata.
- * Identifiers MUST comprise only ASCII alphanumerics and hyphens \[0-9A-Za-z-\].
+ * Identifiers MUST comprise only ASCII alphanumerics and hyphens &#91;0-9A-Za-z-&#93;.
  * Identifiers MUST NOT be empty.
  * Ignored when determining version precedence.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
-class Build(override val ids: List<Id>) : Ids(ids) {
+class BuildMetadata(override val ids: List<Id>) : Ids(ids) {
     constructor(vararg ids: String) : this(ids.map { Id.parse(it, true) })
 }
 
@@ -199,26 +207,27 @@ class Build(override val ids: List<Id>) : Ids(ids) {
  * May contain pre-release version and build metadata.
  *
  * @author Abhijit Sarkar
+ * @since 1.0.0
  */
-class SemVer(val normal: Normal, val preRelease: PreRelease?, val build: Build?) : Comparable<SemVer> {
-    constructor(normal: Normal) : this(normal, null, null)
+class SemVer(val normalVersion: NormalVersion, val preReleaseVersion: PreReleaseVersion?, val buildMetadata: BuildMetadata?) : Comparable<SemVer> {
+    constructor(normalVersion: NormalVersion) : this(normalVersion, null, null)
 
     override fun toString(): String {
-        val s = StringBuilder().append(normal)
-        if (preRelease != null) s.append('-').append(preRelease)
-        if (build != null) s.append('+').append(build)
+        val s = StringBuilder().append(normalVersion)
+        if (preReleaseVersion != null) s.append('-').append(preReleaseVersion)
+        if (buildMetadata != null) s.append('+').append(buildMetadata)
         return s.toString()
     }
 
-    fun hasPreRelease(): Boolean = preRelease != null
-    fun hasBuild(): Boolean = build != null
+    fun hasPreReleaseVersion(): Boolean = preReleaseVersion != null
+    fun hasBuildMetadata(): Boolean = buildMetadata != null
 
     override fun compareTo(other: SemVer): Int {
-        val result = normal.compareTo(other.normal)
+        val result = normalVersion.compareTo(other.normalVersion)
         return if (result == 0) {
-            if (preRelease != null && other.preRelease == null) -1
-            else if (preRelease == null && other.preRelease != null) 1
-            else if (preRelease != null && other.preRelease != null) preRelease.compareTo(other.preRelease)
+            if (preReleaseVersion != null && other.preReleaseVersion == null) -1
+            else if (preReleaseVersion == null && other.preReleaseVersion != null) 1
+            else if (preReleaseVersion != null && other.preReleaseVersion != null) preReleaseVersion.compareTo(other.preReleaseVersion)
             else 0
         } else result
     }
@@ -230,25 +239,33 @@ class SemVer(val normal: Normal, val preRelease: PreRelease?, val build: Build?)
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(normal, preRelease)
+        return Objects.hash(normalVersion, preReleaseVersion)
     }
 
-    val major = normal.major.toULong()
-    val minor = normal.minor.toULong()
-    val patch = normal.patch.toULong()
+    val majorVersion = normalVersion.majorVersion.toULong()
+    val minorVersion = normalVersion.minorVersion.toULong()
+    val patchVersion = normalVersion.patchVersion.toULong()
 
-    fun withMajor(major: Any): SemVer = SemVer(normal.withMajor(major), preRelease, build)
-    fun withMinor(minor: Any): SemVer = SemVer(normal.withMinor(minor), preRelease, build)
-    fun withPatch(patch: Any): SemVer = SemVer(normal.withPatch(patch), preRelease, build)
-    fun withNormal(normal: Normal): SemVer = SemVer(normal, preRelease, build)
-    fun withPreRelease(preRelease: PreRelease?): SemVer = SemVer(normal, preRelease, build)
-    fun withBuild(build: Build?): SemVer = SemVer(normal, preRelease, build)
+    fun withMajorVersion(major: Any): SemVer = SemVer(normalVersion.withMajorVersion(major), preReleaseVersion, buildMetadata)
+    fun withMinorVersion(minor: Any): SemVer = SemVer(normalVersion.withMinorVersion(minor), preReleaseVersion, buildMetadata)
+    fun withPatchVersion(patch: Any): SemVer = SemVer(normalVersion.withPatchVersion(patch), preReleaseVersion, buildMetadata)
+    fun withNormalVersion(normalVersion: NormalVersion): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
+    fun withPreReleaseVersion(preReleaseVersion: PreReleaseVersion?): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
+    fun withBuildMetadata(buildMetadata: BuildMetadata?): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
 
     companion object {
-        fun parse(str: String): SemVer = SemVerParser().parse(str)
-        fun isValid(str: String): Boolean {
+        /**
+         * Parses [input] to produce a [SemVer].
+         * @throws IllegalArgumentException if the input couldn't be parsed.
+         */
+        fun parse(input: String): SemVer = SemVerParser.getInstance(SemVerParserType.ANTLR).parseStr(input)
+
+        /**
+         * Parses [input] to determine whether it's valid a [SemVer].
+         */
+        fun isValid(input: String): Boolean {
             return try {
-                parse(str)
+                parse(input)
                 true
             } catch (ex: Exception) {
                 false

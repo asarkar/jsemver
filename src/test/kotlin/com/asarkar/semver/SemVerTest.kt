@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.Locale
-import java.util.stream.Stream
 
 class SemVerTest {
     @ParameterizedTest
@@ -32,12 +31,12 @@ class SemVerTest {
 
     @Test
     fun testBuilders() {
-        val v = SemVer(Normal(1, 0, 0))
-        assertThat(v.withMajor(2).withMinor(1).withPatch(1).toString()).isEqualTo("2.1.1")
-        assertThat(v.withNormal(Normal(2, 1, 1)).toString()).isEqualTo("2.1.1")
-        assertThat(v.withPreRelease(PreRelease("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
-        assertThat(v.withBuild(Build("001")).toString()).isEqualTo("1.0.0+001")
-        assertThat(v.withPreRelease(PreRelease("alpha")).withBuild(Build("001")).toString())
+        val v = SemVer(NormalVersion(1, 0, 0))
+        assertThat(v.withMajorVersion(2).withMinorVersion(1).withPatchVersion(1).toString()).isEqualTo("2.1.1")
+        assertThat(v.withNormalVersion(NormalVersion(2, 1, 1)).toString()).isEqualTo("2.1.1")
+        assertThat(v.withPreReleaseVersion(PreReleaseVersion("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
+        assertThat(v.withBuildMetadata(BuildMetadata("001")).toString()).isEqualTo("1.0.0+001")
+        assertThat(v.withPreReleaseVersion(PreReleaseVersion("alpha")).withBuildMetadata(BuildMetadata("001")).toString())
             .isEqualTo("1.0.0-alpha+001")
     }
 
@@ -50,16 +49,16 @@ class SemVerTest {
     @Test
     fun testEquals() {
         assertThat(SemVer.parse("1.0.0-alpha+1")).isEqualTo(SemVer.parse("1.0.0-alpha+1"))
-        assertThat(Normal(1, 0, 0)).isEqualTo(Normal("1", "0", "0"))
-        assertThat(PreRelease("alpha")).isEqualTo(PreRelease("alpha"))
+        assertThat(NormalVersion(1, 0, 0)).isEqualTo(NormalVersion("1", "0", "0"))
+        assertThat(PreReleaseVersion("alpha")).isEqualTo(PreReleaseVersion("alpha"))
         assertThat(AlphanumericId("alpha")).isEqualTo(AlphanumericId("alpha"))
         assertThat(NumericId(1)).isEqualTo(NumericId(1))
     }
 
     companion object {
         @JvmStatic
-        fun versionsProvider(): Stream<List<String>> {
-            return Stream.of(
+        fun versionsProvider(): List<List<String>> {
+            return listOf(
                 listOf("1.0.0", "2.0.0", "2.1.0", "2.1.1"),
                 listOf("1.0.0-alpha", "1.0.0"),
                 listOf(
