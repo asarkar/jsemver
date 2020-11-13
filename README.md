@@ -56,10 +56,10 @@ From Java, use `compareTo` explicitly.
 I don't see the point in providing a complicated DSL for checking wildcard constraints or incomplete version
 constraints, because all of those can be rewritten using `compareTo`. For example:
 ```
-v.satisfies(">1.2.2") can be rewritten as v > Semver.parse("1.2.2)
-v.satisfies("1.2.+") can be rewritten as v >= Semver.parse("1.2.0)
-v.satisfies("(,1.8.9]") can be rewritten as v <= Semver.parse("1.8.9)
-v.satisfies("1.0-2.0") can be rewritten as v >=1.0.0 && v <=2.0.0
+v.satisfies(">1.2.2") can be rewritten as v > SemVer.parse("1.2.2")
+v.satisfies("1.2.+") can be rewritten as v >= SemVer.parse("1.2.0")
+v.satisfies("(,1.8.9]") can be rewritten as v <= SemVer.parse("1.8.9")
+v.satisfies("1.0-2.0") can be rewritten as v >= SemVer.parse("1.0.0") && v <= SemVer.parse("2.0.0")
 ``` 
 
 See [Semver cheatsheet](https://devhints.io/semver) for more examples.

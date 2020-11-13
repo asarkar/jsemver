@@ -57,8 +57,11 @@ class SemVerTest {
         val v = SemVer(NormalVersion(1, 0, 0))
         assertThat(v.withMajorVersion(2).withMinorVersion(1).withPatchVersion(1).toString()).isEqualTo("2.1.1")
         assertThat(v.withNormalVersion(NormalVersion(2, 1, 1)).toString()).isEqualTo("2.1.1")
+        assertThat(v.withNormalVersion(2, 1, 1).toString()).isEqualTo("2.1.1")
         assertThat(v.withPreReleaseVersion(PreReleaseVersion("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
+        assertThat(v.withPreReleaseVersion(listOf("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
         assertThat(v.withBuildMetadata(BuildMetadata("001")).toString()).isEqualTo("1.0.0+001")
+        assertThat(v.withBuildMetadata(listOf("001")).toString()).isEqualTo("1.0.0+001")
         assertThat(v.withPreReleaseVersion(PreReleaseVersion("alpha")).withBuildMetadata(BuildMetadata("001")).toString())
             .isEqualTo("1.0.0-alpha+001")
     }
