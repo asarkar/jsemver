@@ -9,7 +9,15 @@ fun SemVer.withMinorVersion(minor: Any): SemVer = SemVer(normalVersion.withMinor
 fun SemVer.withPatchVersion(patch: Any): SemVer = SemVer(normalVersion.withPatchVersion(patch), preReleaseVersion, buildMetadata)
 fun SemVer.withNormalVersion(normalVersion: NormalVersion): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
 fun SemVer.withNormalVersion(major: Any, minor: Any, patch: Any): SemVer = SemVer(NormalVersion(major, minor, patch), preReleaseVersion, buildMetadata)
-fun SemVer.withPreReleaseVersion(preReleaseVersion: PreReleaseVersion?): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
-fun SemVer.withPreReleaseVersion(ids: List<Any>): SemVer = SemVer(normalVersion, PreReleaseVersion(*ids.toTypedArray()), buildMetadata)
-fun SemVer.withBuildMetadata(buildMetadata: BuildMetadata?): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
-fun SemVer.withBuildMetadata(ids: List<Any>): SemVer = SemVer(normalVersion, preReleaseVersion, BuildMetadata(*ids.toTypedArray()))
+
+fun SemVer.withPreReleaseVersion(vararg ids: Any?): SemVer {
+    return if (ids.isEmpty() || ids.first() == null) SemVer(normalVersion, null, buildMetadata)
+    else if (ids.first() is PreReleaseVersion) SemVer(normalVersion, ids.first() as PreReleaseVersion, buildMetadata)
+    else SemVer(normalVersion, PreReleaseVersion(*ids.filterNotNull().toTypedArray()), buildMetadata)
+}
+
+fun SemVer.withBuildMetadata(vararg ids: Any?): SemVer {
+    return if (ids.isEmpty() || ids.first() == null) SemVer(normalVersion, preReleaseVersion, null)
+    else if (ids.first() is BuildMetadata) SemVer(normalVersion, preReleaseVersion, ids.first() as BuildMetadata)
+    else SemVer(normalVersion, preReleaseVersion, BuildMetadata(*ids.filterNotNull().toTypedArray()))
+}

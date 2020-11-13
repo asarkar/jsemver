@@ -36,8 +36,12 @@ SemVer(NormalVersion("1", "0", "0"))
 SemVer(NormalVersion(1, 0, 0), PreReleaseVersion("alpha"), BuildMetadata(1))
 v
   .withMajorVersion(2).withMinorVersion(1).withPatchVersion(1)
-  .withPreReleaseVersion(PreReleaseVersion("alpha")).withBuildMetadata(BuildMetadata("001"))
+  .withPreReleaseVersion("alpha").withBuildMetadata(1)
 ```
+
+`v.withPreReleaseVersion()` or `v.withPreReleaseVersion(null)` will remove the pre-release version.
+Same for `v.withBuildMetadata()`.
+
 See the KDoc for more details. This project has almost 100% test coverage, you're also welcome to look at the unit tests.
 
 ### Compare/sort semantic versions

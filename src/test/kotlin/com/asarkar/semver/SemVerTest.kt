@@ -59,9 +59,13 @@ class SemVerTest {
         assertThat(v.withNormalVersion(NormalVersion(2, 1, 1)).toString()).isEqualTo("2.1.1")
         assertThat(v.withNormalVersion(2, 1, 1).toString()).isEqualTo("2.1.1")
         assertThat(v.withPreReleaseVersion(PreReleaseVersion("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
-        assertThat(v.withPreReleaseVersion(listOf("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
+        assertThat(v.withPreReleaseVersion("beta", "1").toString()).isEqualTo("1.0.0-beta.1")
+        assertThat(v.withPreReleaseVersion(null).hasPreReleaseVersion()).isFalse
+        assertThat(v.withPreReleaseVersion().hasPreReleaseVersion()).isFalse
         assertThat(v.withBuildMetadata(BuildMetadata("001")).toString()).isEqualTo("1.0.0+001")
-        assertThat(v.withBuildMetadata(listOf("001")).toString()).isEqualTo("1.0.0+001")
+        assertThat(v.withBuildMetadata("001").toString()).isEqualTo("1.0.0+001")
+        assertThat(v.withBuildMetadata(null).hasBuildMetadata()).isFalse
+        assertThat(v.withBuildMetadata().hasBuildMetadata()).isFalse
         assertThat(v.withPreReleaseVersion(PreReleaseVersion("alpha")).withBuildMetadata(BuildMetadata("001")).toString())
             .isEqualTo("1.0.0-alpha+001")
     }
