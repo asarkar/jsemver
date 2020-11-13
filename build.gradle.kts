@@ -70,9 +70,13 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     }
 }
 
-tasks.withType<org.jetbrains.dokka.gradle.DokkaTask> {
-    outputFormat = "html"
-    outputDirectory = "$buildDir/javadoc"
+tasks.dokkaHtml.configure {
+    outputDirectory.set(buildDir.resolve("javadoc"))
+    dokkaSourceSets.configureEach {
+        jdkVersion.set(8)
+        skipEmptyPackages.set(true)
+        platform.set(org.jetbrains.dokka.Platform.jvm)
+    }
 }
 
 val sourcesJar by tasks.creating(Jar::class) {
@@ -86,7 +90,7 @@ val kdocJar by tasks.creating(Jar::class) {
     group = JavaBasePlugin.DOCUMENTATION_GROUP
     description = "Creates KDoc"
     archiveClassifier.set("javadoc")
-    from(tasks.dokka)
+    from(tasks.dokkaHtml)
 }
 
 tasks.jar.configure {

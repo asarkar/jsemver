@@ -121,6 +121,13 @@ class SemVerParserTest {
         ids = semVer.buildMetadata!!.ids.groupBy { it is NumericId }
         Assertions.assertThat(ids[false]!!.map { it.toString() }).containsExactly("21AF26D3--117B344092BD")
         Assertions.assertThat(ids[true]).isNull()
+
+        semVer = parser.parseStr("0.1.0")
+        Assertions.assertThat(semVer.hasPreReleaseVersion()).isFalse
+        Assertions.assertThat(semVer.hasBuildMetadata()).isFalse
+        Assertions.assertThat(semVer.majorVersion).isEqualTo(0uL)
+        Assertions.assertThat(semVer.minorVersion).isEqualTo(1uL)
+        Assertions.assertThat(semVer.patchVersion).isEqualTo(0uL)
     }
 
     companion object {

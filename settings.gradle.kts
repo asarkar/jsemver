@@ -1,4 +1,9 @@
 pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        jcenter()
+    }
+
     val kotlinPluginVersion: String by settings
     val dokkaPluginVersion: String by settings
     val ktlintVersion: String by settings

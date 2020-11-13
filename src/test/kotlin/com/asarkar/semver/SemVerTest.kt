@@ -8,7 +8,21 @@ import java.util.Locale
 
 class SemVerTest {
     @ParameterizedTest
-    @MethodSource("versionsProvider")
+    @MethodSource("createProvider")
+    fun testCreate(v: SemVer) {
+        assertThat(v.majorVersion).isEqualTo(1uL)
+        assertThat(v.minorVersion).isEqualTo(0uL)
+        assertThat(v.patchVersion).isEqualTo(0uL)
+        if (v.hasPreReleaseVersion()) {
+            assertThat(v.preReleaseVersion.toString()).isEqualTo("alpha")
+        }
+        if (v.hasBuildMetadata()) {
+            assertThat(v.buildMetadata.toString()).isEqualTo("1")
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("precedenceProvider")
     fun testPrecedence(args: List<String>) {
         val versions = args
             .shuffled()
@@ -16,6 +30,15 @@ class SemVerTest {
             .sorted()
             .map { it.toString() }
         assertThat(versions).containsExactlyElementsOf(args)
+    }
+
+    @Test
+    fun testCompare() {
+        assertThat(SemVer.parse("1.0.0") < SemVer.parse("1.0.1")).isTrue
+        assertThat(SemVer.parse("1.0.0") <= SemVer.parse("1.0.1")).isTrue
+        assertThat(SemVer.parse("1.0.1") >= SemVer.parse("1.0.0")).isTrue
+        assertThat(SemVer.parse("1.0.1") > SemVer.parse("1.0.0")).isTrue
+        assertThat(SemVer.parse("1.0.0") == SemVer.parse("1.0.0")).isTrue
     }
 
     @Test
@@ -57,7 +80,7 @@ class SemVerTest {
 
     companion object {
         @JvmStatic
-        fun versionsProvider(): List<List<String>> {
+        fun precedenceProvider(): List<List<String>> {
             return listOf(
                 listOf("1.0.0", "2.0.0", "2.1.0", "2.1.1"),
                 listOf("1.0.0-alpha", "1.0.0"),
@@ -66,6 +89,17 @@ class SemVerTest {
                     "1.0.0-beta.2", "1.0.0-beta.11", "1.0.0-rc.1", "1.0.0"
                 ),
                 listOf("1.0.0-b10", "1.0.0-b9")
+            )
+        }
+
+        @JvmStatic
+        fun createProvider(): List<SemVer> {
+            return listOf(
+                SemVer(NormalVersion(1, 0, 0)),
+                SemVer(NormalVersion("1", "0", "0")),
+                SemVer(NormalVersion("1", 0, "0")),
+                SemVer(NormalVersion(1, 0, 0), PreReleaseVersion("alpha"), BuildMetadata(1)),
+                SemVer(NormalVersion(1, 0, 0), PreReleaseVersion("alpha"), BuildMetadata("1"))
             )
         }
     }

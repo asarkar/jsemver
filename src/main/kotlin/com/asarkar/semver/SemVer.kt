@@ -137,10 +137,6 @@ class NormalVersion(val majorVersion: NumericId, val minorVersion: NumericId, va
     override fun hashCode(): Int {
         return Objects.hash(*components.toTypedArray())
     }
-
-    fun withMajorVersion(major: Any): NormalVersion = NormalVersion(NumericId(major, false), minorVersion, patchVersion)
-    fun withMinorVersion(minor: Any): NormalVersion = NormalVersion(majorVersion, NumericId(minor, false), patchVersion)
-    fun withPatchVersion(patch: Any): NormalVersion = NormalVersion(majorVersion, minorVersion, NumericId(patch, false))
 }
 
 /**
@@ -165,7 +161,7 @@ sealed class Ids(open val ids: List<Id>) {
  *
  */
 class PreReleaseVersion(override val ids: List<Id>) : Ids(ids), Comparable<PreReleaseVersion> {
-    constructor(vararg ids: String) : this(ids.map { Id.parse(it, false) })
+    constructor(vararg ids: Any) : this(ids.map { Id.parse(it.toString(), false) })
 
     override fun compareTo(other: PreReleaseVersion): Int {
         val result = ids
@@ -198,7 +194,7 @@ class PreReleaseVersion(override val ids: List<Id>) : Ids(ids), Comparable<PreRe
  * @since 1.0.0
  */
 class BuildMetadata(override val ids: List<Id>) : Ids(ids) {
-    constructor(vararg ids: String) : this(ids.map { Id.parse(it, true) })
+    constructor(vararg ids: Any) : this(ids.map { Id.parse(it.toString(), true) })
 }
 
 /**
@@ -245,13 +241,6 @@ class SemVer(val normalVersion: NormalVersion, val preReleaseVersion: PreRelease
     val majorVersion = normalVersion.majorVersion.toULong()
     val minorVersion = normalVersion.minorVersion.toULong()
     val patchVersion = normalVersion.patchVersion.toULong()
-
-    fun withMajorVersion(major: Any): SemVer = SemVer(normalVersion.withMajorVersion(major), preReleaseVersion, buildMetadata)
-    fun withMinorVersion(minor: Any): SemVer = SemVer(normalVersion.withMinorVersion(minor), preReleaseVersion, buildMetadata)
-    fun withPatchVersion(patch: Any): SemVer = SemVer(normalVersion.withPatchVersion(patch), preReleaseVersion, buildMetadata)
-    fun withNormalVersion(normalVersion: NormalVersion): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
-    fun withPreReleaseVersion(preReleaseVersion: PreReleaseVersion?): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
-    fun withBuildMetadata(buildMetadata: BuildMetadata?): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
 
     companion object {
         /**
