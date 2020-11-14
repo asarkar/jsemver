@@ -29,6 +29,9 @@ SemVer.parseStr("1.0.0")
 `SemVer` comprises `NormalVersion`, and optionally, `PreRelease` and `Build`. The objects are immutable but there are 
 various builder methods that return new instances after appropriate modification.
 
+The grammar can be seen [here](src/main/antlr/com/asarkar/semver/antlr/SemVer.g4); it is consistent with the 
+[BNF grammar](https://semver.org/#backusnaur-form-grammar-for-valid-semver-versions) in the specification.
+
 More ways to instantiate a `SemVer`:
 ```
 SemVer(NormalVersion(1, 0, 0))
@@ -39,8 +42,7 @@ v
   .withPreReleaseVersion("alpha").withBuildMetadata(1)
 ```
 
-`v.withPreReleaseVersion()` or `v.withPreReleaseVersion(null)` will remove the pre-release version.
-Same for `v.withBuildMetadata()`.
+`v.withPreReleaseVersion()` will remove the pre-release version. Same for `v.withBuildMetadata()`.
 
 See the KDoc for more details. This project has almost 100% test coverage, you're also welcome to look at the unit tests.
 

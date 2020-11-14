@@ -10,14 +10,14 @@ fun SemVer.withPatchVersion(patch: Any): SemVer = SemVer(normalVersion.withPatch
 fun SemVer.withNormalVersion(normalVersion: NormalVersion): SemVer = SemVer(normalVersion, preReleaseVersion, buildMetadata)
 fun SemVer.withNormalVersion(major: Any, minor: Any, patch: Any): SemVer = SemVer(NormalVersion(major, minor, patch), preReleaseVersion, buildMetadata)
 
-fun SemVer.withPreReleaseVersion(vararg ids: Any?): SemVer {
-    return if (ids.isEmpty() || ids.first() == null) SemVer(normalVersion, null, buildMetadata)
+fun SemVer.withPreReleaseVersion(vararg ids: Any): SemVer {
+    return if (ids.isEmpty()) SemVer(normalVersion, null, buildMetadata)
     else if (ids.first() is PreReleaseVersion) SemVer(normalVersion, ids.first() as PreReleaseVersion, buildMetadata)
-    else SemVer(normalVersion, PreReleaseVersion(*ids.filterNotNull().toTypedArray()), buildMetadata)
+    else SemVer(normalVersion, PreReleaseVersion(*ids), buildMetadata)
 }
 
-fun SemVer.withBuildMetadata(vararg ids: Any?): SemVer {
-    return if (ids.isEmpty() || ids.first() == null) SemVer(normalVersion, preReleaseVersion, null)
+fun SemVer.withBuildMetadata(vararg ids: Any): SemVer {
+    return if (ids.isEmpty()) SemVer(normalVersion, preReleaseVersion, null)
     else if (ids.first() is BuildMetadata) SemVer(normalVersion, preReleaseVersion, ids.first() as BuildMetadata)
-    else SemVer(normalVersion, preReleaseVersion, BuildMetadata(*ids.filterNotNull().toTypedArray()))
+    else SemVer(normalVersion, preReleaseVersion, BuildMetadata(*ids))
 }

@@ -1,5 +1,6 @@
 package com.asarkar.semver
 
+import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -60,14 +61,40 @@ class SemVerTest {
         assertThat(v.withNormalVersion(2, 1, 1).toString()).isEqualTo("2.1.1")
         assertThat(v.withPreReleaseVersion(PreReleaseVersion("beta", "1")).toString()).isEqualTo("1.0.0-beta.1")
         assertThat(v.withPreReleaseVersion("beta", "1").toString()).isEqualTo("1.0.0-beta.1")
-        assertThat(v.withPreReleaseVersion(null).hasPreReleaseVersion()).isFalse
         assertThat(v.withPreReleaseVersion().hasPreReleaseVersion()).isFalse
         assertThat(v.withBuildMetadata(BuildMetadata("001")).toString()).isEqualTo("1.0.0+001")
         assertThat(v.withBuildMetadata("001").toString()).isEqualTo("1.0.0+001")
-        assertThat(v.withBuildMetadata(null).hasBuildMetadata()).isFalse
         assertThat(v.withBuildMetadata().hasBuildMetadata()).isFalse
         assertThat(v.withPreReleaseVersion(PreReleaseVersion("alpha")).withBuildMetadata(BuildMetadata("001")).toString())
             .isEqualTo("1.0.0-alpha+001")
+        val bad = emptyList<Int>()
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            SemVer(NormalVersion(1, 0, bad))
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withNormalVersion(NormalVersion(1, 0, bad))
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withNormalVersion(1, 0, bad)
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withPreReleaseVersion(PreReleaseVersion("beta", bad))
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withPreReleaseVersion("beta", bad)
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withPreReleaseVersion(BuildMetadata("beta", bad))
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withBuildMetadata(BuildMetadata("beta", bad))
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withBuildMetadata("beta", bad)
+        }
+        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
+            v.withBuildMetadata(PreReleaseVersion("beta", bad))
+        }
     }
 
     @Test
