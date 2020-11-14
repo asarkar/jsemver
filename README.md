@@ -8,6 +8,9 @@ Specifically it provides the ability to:
  - [x] Instantiate/parse semantic versions
  - [x] Compare/sort semantic versions
  - [ ] Check if a semantic version fits within a set of constraints
+ 
+ The grammar can be seen [here](src/main/antlr/com/asarkar/semver/antlr/SemVer.g4); it is consistent with the 
+[BNF grammar](https://semver.org/#backusnaur-form-grammar-for-valid-semver-versions) in the specification.
 
 [![](https://github.com/asarkar/jsemver/workflows/CI%20Pipeline/badge.svg)](https://github.com/asarkar/jsemver/actions?query=workflow%3A%22CI+Pipeline%22)
 
@@ -26,11 +29,8 @@ A valid semantic version is represented by the `SemVer` class. The easiest way t
 SemVer.parseStr("1.0.0")
 ```
 
-`SemVer` comprises `NormalVersion`, and optionally, `PreRelease` and `Build`. The objects are immutable but there are 
+`SemVer` comprises `NormalVersion`, and optionally, `PreReleaseVersion` and `BuildMetadata`. The objects are immutable but there are 
 various builder methods that return new instances after appropriate modification.
-
-The grammar can be seen [here](src/main/antlr/com/asarkar/semver/antlr/SemVer.g4); it is consistent with the 
-[BNF grammar](https://semver.org/#backusnaur-form-grammar-for-valid-semver-versions) in the specification.
 
 More ways to instantiate a `SemVer`:
 ```
@@ -42,13 +42,13 @@ v
   .withPreReleaseVersion("alpha").withBuildMetadata(1)
 ```
 
-`v.withPreReleaseVersion()` will remove the pre-release version. Same for `v.withBuildMetadata()`.
+`v.withPreReleaseVersion()` (empty) will remove the pre-release version. Same for `v.withBuildMetadata()`.
 
 See the KDoc for more details. This project has almost 100% test coverage, you're also welcome to look at the unit tests.
 
 ### Compare/sort semantic versions
 
-Other than `Build`, the rest implement `equals`, `hashCode`, and `Comparable`.
+Other than `BuildMetadata`, the rest implement `equals`, `hashCode`, and `Comparable`.
 
 From Kotlin code, you can use the usual comparison operators:
 ```
@@ -59,8 +59,8 @@ From Java, use `compareTo` explicitly.
 
 ### Check if a semantic version fits within a set of constraints
 
-I don't see the point in providing a complicated DSL for checking wildcard constraints or incomplete version
-constraints, because all of those can be rewritten using `compareTo`. For example:
+I don't see the point in providing a DSL for checking complicated constraints, 
+because all of those can be rewritten using `compareTo`. For example:
 ```
 v.satisfies(">1.2.2") can be rewritten as v > SemVer.parse("1.2.2")
 v.satisfies("1.2.+") can be rewritten as v >= SemVer.parse("1.2.0")
